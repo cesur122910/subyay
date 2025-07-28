@@ -10,6 +10,7 @@
       background: #222;
       font-family: monospace;
       user-select: none;
+      position: relative;
     }
     canvas {
       display: block;
@@ -17,6 +18,31 @@
       background: #333;
       border: 2px solid lime;
       touch-action: none;
+    }
+    /* Düymələrin stilləri */
+    #leftBtn, #rightBtn {
+      position: fixed;
+      bottom: 50px;
+      width: 80px;
+      height: 80px;
+      font-size: 30px;
+      color: white;
+      background: rgba(0, 128, 0, 0.7);
+      border: none;
+      border-radius: 40px;
+      user-select: none;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    #leftBtn {
+      left: 30px;
+    }
+    #rightBtn {
+      right: 30px;
     }
     #restartBtn {
       position: absolute;
@@ -31,16 +57,22 @@
       cursor: pointer;
       display: none;
       user-select: none;
+      z-index: 20;
     }
   </style>
 </head>
 <body>
   <canvas id="game" width="400" height="600"></canvas>
+
+  <button id="leftBtn">◀</button>
+  <button id="rightBtn">▶</button>
   <button id="restartBtn">Yenidən Oyna</button>
 
   <script>
     const canvas = document.getElementById("game");
     const ctx = canvas.getContext("2d");
+    const leftBtn = document.getElementById("leftBtn");
+    const rightBtn = document.getElementById("rightBtn");
     const restartBtn = document.getElementById("restartBtn");
 
     let player = { x: 180, y: 500, width: 40, height: 40, color: "cyan" };
@@ -57,6 +89,7 @@
       loop();
     }
 
+    // Klaviatura idarəsi (A, D, ArrowLeft, ArrowRight)
     document.addEventListener("keydown", e => {
       if (gameOver) return;
       if ((e.key === "ArrowLeft" || e.key.toLowerCase() === "a") && player.x > 0) {
@@ -67,15 +100,28 @@
       }
     });
 
-    canvas.addEventListener("touchstart", function (e) {
-      if (gameOver) return;
+    // Düymələr üçün funksiyalar
+    leftBtn.addEventListener("touchstart", e => {
       e.preventDefault();
-      const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
-      if (touchX < canvas.width / 2) {
-        if (player.x > 0) player.x -= 40;
-      } else {
-        if (player.x < 360) player.x += 40;
-      }
+      if (gameOver) return;
+      if (player.x > 0) player.x -= 40;
+    });
+    rightBtn.addEventListener("touchstart", e => {
+      e.preventDefault();
+      if (gameOver) return;
+      if (player.x < 360) player.x += 40;
+    });
+
+    // Siçan klikləri üçün (desktop üçün)
+    leftBtn.addEventListener("mousedown", e => {
+      e.preventDefault();
+      if (gameOver) return;
+      if (player.x > 0) player.x -= 40;
+    });
+    rightBtn.addEventListener("mousedown", e => {
+      e.preventDefault();
+      if (gameOver) return;
+      if (player.x < 360) player.x += 40;
     });
 
     function spawnObstacle() {
@@ -143,3 +189,4 @@
   </script>
 </body>
 </html>
+
