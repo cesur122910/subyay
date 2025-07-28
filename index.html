@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini Subway Oyunu</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #222;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      background: #333;
+      border: 2px solid lime;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="game" width="400" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let player = { x: 180, y: 500, width: 40, height: 40, color: "cyan" };
+let obstacles = [];
+let score = 0;
+let gameOver = false;
+
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft" && player.x > 0) player.x -= 40;
+  if (e.key === "ArrowRight" && player.x < 360) player.x += 40;
+});
+
+function spawnObstacle() {
+  const lanes = [0, 80, 160, 240, 320];
+  const x = lanes[Math.floor(Math.random() * lanes.length)];
+  obstacles.push({ x: x, y: 0, width: 40, height: 40, color: "red" });
+}
+
+function update() {
+  if (gameOver) return;
+
+  // Əngəlləri hərəkət etdir
+  obstacles.forEach(ob => ob.y += 5);
+
+  // Toqquşma yoxlaması
+  obstacles.forEach(ob => {
+    if (
+      player.x < ob.x + ob.width &&
+      player.x + player.width > ob.x &&
+      player.y < ob.y + ob.height &&
+      player.y + player.height > ob.y
+    ) {
+      gameOver = true;
+    }
+  });
+
+  // Əngəlləri təmizlə
+  obstacles = obstacles.filter(ob => ob.y < 600);
+
+  // Skor artır
+  score++;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, 400, 600);
+
+  // Oyunçu
+  ctx.fillStyle = player.color;
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+
+  // Əngəllər
+  obstacles.forEach(ob => {
+    ctx.fillStyle = ob.color;
+    ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+  });
+
+  // Skor
+  ctx.fillStyle = "white";
+  ctx.font = "18px monospace";
+  ctx.fillText("Skor: " + score, 10, 20);
+
+  if (gameOver) {
+    ctx.fillStyle = "yellow";
+    ctx.font = "40px sans-serif";
+    ctx.fillText("OYUN BITDI", 80, 300);
+  }
+}
+
+function loop() {
+  update();
+  draw();
+  if (!gameOver) requestAnimationFrame(loop);
+}
+
+setInterval(spawnObstacle, 1000);
+loop();
+</script>
+
+</body>
+</html>
