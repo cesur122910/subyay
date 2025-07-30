@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sevgi Zarafatı</title>
   <style>
     body {
@@ -68,18 +68,16 @@
   <h1>Düyməni bas, sürpriz var 😏</h1>
   <button id="start-btn">BAS!</button>
 
-  <!-- Audio (musiqi) -->
+  <!-- Musiqi -->
   <audio id="music" src="https://www.bensound.com/bensound-music/bensound-love.mp3"></audio>
 
   <!-- Məktub -->
   <div id="letter">
     ❤️ Məndən sevgili olarsan? ❤️
-
     <div id="response-buttons">
       <button id="yes-btn">Hə</button>
       <button id="no-btn">Yox</button>
     </div>
-
     <div id="number"></div>
   </div>
 
@@ -103,8 +101,8 @@
       numberDiv.textContent = "📞 Əlaqə: +994 55 460 65 43";
     });
 
-    // "Yox" düyməsinin mouse gələndə qaçması
-    noBtn.addEventListener("mouseenter", () => {
+    // "Yox" düyməsinə basanda qaçsın
+    noBtn.addEventListener("click", () => {
       const x = Math.floor(Math.random() * (window.innerWidth - 100));
       const y = Math.floor(Math.random() * (window.innerHeight - 100));
       noBtn.style.position = "absolute";
