@@ -392,8 +392,11 @@
 </div>
 
 <!-- Add Car Modal -->
-<div id="addCarFormWrapper">
-  <h2>Yeni Maşın Əlavə Et</h2>
+<div id="addCarFormWrapper"
+ style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: white; padding: 20px; border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.3); z-index: 999;">
+  <button id="closeAddCarForm" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer;">❌</button>
+  <h2 style="text-align:center; color: #ff4081;">Yeni Maşın Əlavə Et</h2>
   <form id="addCarForm">
     <input type="text" id="carName" placeholder="Maşın adı" required minlength="2" />
     <select id="carModel" required>
@@ -410,7 +413,6 @@
     </select>
     <input type="number" id="carPrice" placeholder="Qiymət (AZN)" min="0" required />
     <input type="file" id="carImage" accept="image/*" required />
-    <label><input type="checkbox" id="vipCheckbox" /> VIP elan et</label>
     <button type="submit">Əlavə et</button>
   </form>
 </div>
@@ -810,6 +812,64 @@
   // Sayt açılanda istifadəçi məlumatlarını yüklə
   loadUser();
   loadCarsFromStorage();
+document.getElementById("closeAddCarForm").addEventListener("click", () => {
+  document.getElementById("addCarFormWrapper").style.display = "none";
+});
+
+document.getElementById("addCarBtn").addEventListener("click", () => {
+  document.getElementById("addCarFormWrapper").style.display = "block";
+});
+
+document.getElementById("addCarForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("carName").value.trim();
+  const model = document.getElementById("carModel").value;
+  const price = parseInt(document.getElementById("carPrice").value);
+  const imageFile = document.getElementById("carImage").files[0];
+
+  if (!name || !model || isNaN(price) || !imageFile) {
+    alert("Zəhmət olmasa bütün məlumatları doldurun.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const base64Img = event.target.result;
+
+    const newCar = {
+      id: Date.now(),
+      name,
+      model,
+      price,
+      image: base64Img,
+      isVip: false,
+      ownerPhone: user.phone
+    };
+
+    cars.push(newCar);
+    localStorage.setItem('carTurboCars', JSON.stringify(cars));
+    filteredCars = [...cars];
+    renderCars(filteredCars);
+
+    document.getElementById("addCarFormWrapper").style.display = "none";
+    document.getElementById("addCarForm").reset();
+  };
+
+  reader.onerror = function () {
+    alert("Şəkil oxunarkən xəta baş verdi.");
+  };
+
+  reader.readAsDataURL(imageFile);
+});
+// Məsələn maşını əlavə etdikdə
+cars.push(newCar);
+localStorage.setItem('carTurboCars', JSON.stringify(cars));
+function loadCarsFromStorage() {
+  const stored = localStorage.getItem('carTurboCars');
+  cars = stored ? JSON.parse(stored) : [];
+  renderCars(cars);
+}
 
 </script>
 
